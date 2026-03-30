@@ -38,7 +38,7 @@ def check_api_health(name, url):
         response_time = round((time.time() - start_time) * 1000, 2)  # Convert to ms
         
         # Determine status based on response
-<<<<<<< HEAD
+        
         if response.status_code == 200:
             data = response.json()
             # Most status APIs return an 'indicator' field
@@ -52,7 +52,7 @@ def check_api_health(name, url):
                 status = 'down'
         else:
             status = 'down'
-=======
+
          error = None
 
 if response.status_code == 200:
@@ -73,18 +73,18 @@ elif 400 <= response.status_code < 500:
 elif 500 <= response.status_code < 600:
     status = 'down'
     error = f"Server error: {response.status_code}"
->>>>>>> e166e7a (fix status logic and handle 404 correctly)
+    e166e7a (fix status logic and handle 404 correctly)
             
         return {
             'status': status,
             'response_time_ms': response_time,
             'status_code': response.status_code,
             'last_checked': datetime.now().isoformat(),
-<<<<<<< HEAD
+
             'error': None
-=======
+
             'error': error
->>>>>>> e166e7a (fix status logic and handle 404 correctly)
+ e166e7a (fix status logic and handle 404 correctly)
         }
     except requests.exceptions.Timeout:
         return {
