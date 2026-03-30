@@ -3,7 +3,6 @@ import time
 import json
 import random
 from datetime import datetime
-from zoneinfo import ZoneInfo
 from flask import Flask, render_template, jsonify
 import os
 
@@ -38,6 +37,8 @@ def check_api_health(name, url):
         response_time = round((time.time() - start_time) * 1000, 2)  # Convert to ms
         
         # Determine status based on response
+        status = 'down'
+        error = None
         
         if response.status_code == 200:
             data = response.json()
@@ -50,41 +51,21 @@ def check_api_health(name, url):
                 status = 'degraded'
             else:
                 status = 'down'
-        else:
+                
+        elif 400 <= response.status_code < 500:
+            status = 'unknown'
+            error = f"Monitoring endpoint error: {response.status_code}"
+            
+        elif 500 <= response.status_code < 600:
             status = 'down'
-
-    error = None
-        
-if response.status_code == 200:
-    data = response.json()
-    indicator = data.get('status', {}).get('indicator', 'unknown')
-
-    if indicator == 'none':
-        status = 'healthy'
-    elif indicator in ['minor', 'maintenance']:
-        status = 'degraded'
-    else:
-        status = 'down'
-
-elif 400 <= response.status_code < 500:
-    status = 'unknown'
-    error = f"Monitoring endpoint error: {response.status_code}"
-
-elif 500 <= response.status_code < 600:
-    status = 'down'
-    error = f"Server error: {response.status_code}"
-    e166e7a (fix status logic and handle 404 correctly)
+            error = f"Server error: {response.status_code}"
             
         return {
             'status': status,
             'response_time_ms': response_time,
             'status_code': response.status_code,
             'last_checked': datetime.now().isoformat(),
-
-            'error': None
-
             'error': error
- e166e7a (fix status logic and handle 404 correctly)
         }
     except requests.exceptions.Timeout:
         return {
@@ -126,7 +107,7 @@ def generate_mock_health_data(name):
         'status': status,
         'response_time_ms': response_time,
         'status_code': status_code,
-        'last_checked': datetime.now(ZoneInfo("America/New_York")).isoformat(),
+        'last_checked': datetime.now().isoformat(),
         'error': error
     }
 
@@ -136,7 +117,7 @@ def run_health_checks():
     for name, url in APIS.items():
         results[name] = check_api_health(name, url)
     
-    health_data['last_check'] = datetime.now(ZoneInfo("America/New_York")).isoformat()
+    health_data['last_check'] = datetime.now().isoformat()
     health_data['results'] = results
     return results
 
