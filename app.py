@@ -53,8 +53,8 @@ def check_api_health(name, url):
         else:
             status = 'down'
 
-         error = None
-
+    error = None
+        
 if response.status_code == 200:
     data = response.json()
     indicator = data.get('status', {}).get('indicator', 'unknown')
