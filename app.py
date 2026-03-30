@@ -11,7 +11,7 @@ app = Flask(__name__)
 # APIs to monitor - using public status pages
 APIS = {
     'GitHub': 'https://www.githubstatus.com/api/v2/status.json',
-    'Stripe': 'https://status.stripe.com/api/v2/status.json',
+    'Atlassian': 'https://status.atlassian.com/api/v2/status.json'
     'OpenAI': 'https://status.openai.com/api/v2/status.json',
     'Datadog': 'https://status.datadoghq.com/api/v2/status.json'
 }
